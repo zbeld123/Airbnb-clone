@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_APP = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -38,6 +38,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
+
+PROJACT_APP = [
+    "users.apps.UsersConfig",
+]
+
+INSTALLED_APPS = DJANGO_APP + PROJACT_APP
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -112,3 +118,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = "/static/"
+
+AUTH_USER_MODEL = "users.User"
+
