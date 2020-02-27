@@ -43,6 +43,8 @@ PROJACT_APP = [
     "users.apps.UsersConfig",
 ]
 
+THIRD_PARTY_APP = []
+
 INSTALLED_APPS = DJANGO_APP + PROJACT_APP
 
 MIDDLEWARE = [
