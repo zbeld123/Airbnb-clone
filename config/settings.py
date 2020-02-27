@@ -41,11 +41,15 @@ DJANGO_APP = [
 
 PROJACT_APP = [
     "users.apps.UsersConfig",
+    "rooms.apps.RoomsConfig",
+    "core.apps.CoreConfig",
 ]
 
-THIRD_PARTY_APP = []
+THIRD_PARTY_APP = [
+    "django_countries",
+]
 
-INSTALLED_APPS = DJANGO_APP + PROJACT_APP
+INSTALLED_APPS = DJANGO_APP + PROJACT_APP + THIRD_PARTY_APP
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
