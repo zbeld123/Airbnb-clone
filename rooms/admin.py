@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import mark_safe  # html요소가 안전함을 장고에게 알리기 위함
 from . import models
 
 # Register your models here.
@@ -85,12 +86,15 @@ class RoomItemAdmin(admin.ModelAdmin):
     def count_items(self, obj):
         return obj.rooms.count()
 
-    pass
-
 
 @admin.register(models.Photo)
 class PhotoAdmin(admin.ModelAdmin):
 
-    """ """
+    """ Photo Admin Definition """
 
-    pass
+    list_display = ("__str__", "get_thumbnail")
+
+    def get_thumbnail(self, obj):
+        return mark_safe(f'<img src="{obj.file.url}" width=80px/>')
+
+    get_thumbnail.short_description = "Thumbnail"

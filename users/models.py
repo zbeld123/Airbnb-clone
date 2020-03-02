@@ -31,7 +31,7 @@ class User(AbstractUser):
         (CURRENCY_KRW, "krw"),
     )
 
-    avatar = models.ImageField(blank=True)
+    avatar = models.ImageField(upload_to="avatars", blank=True)
     gender = models.CharField(
         choices=GENDER_CHOICES, max_length=10, default=GENDER_MALE, blank=True,
     )

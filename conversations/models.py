@@ -22,7 +22,9 @@ class Conversation(core_models.TimeStampedModel):
     def count_particopants(self):
         return self.participants.count()
 
-    def count_messages(self):
+    def count_messages(
+        self,
+    ):  # conversation은 messages를 갖지 않지만 Message에서 Conversation을 fk로 갖으므로 사용 가능
         return self.messages.count()
 
     count_particopants.short_description = "Number of Participants"
