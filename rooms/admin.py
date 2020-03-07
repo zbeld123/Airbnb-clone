@@ -2,15 +2,35 @@ from django.contrib import admin
 from django.utils.html import mark_safe  # html요소가 안전함을 장고에게 알리기 위함
 from . import models
 
+
+# 인라인 모델
+# 포토모델을 룸 어드민에서 사용하기 위함
+class PhotoInline(admin.TabularInline):
+    model = models.Photo
+
+
 # Register your models here.
 @admin.register(models.Room)
 class RoomAdmin(admin.ModelAdmin):
-    pass
+
+    """ Room Admin Definitions """
+
+    inlines = (PhotoInline,)  # 생성한 포토모델 인라인화
 
     fieldsets = (
         (
             "Basic Info",
-            {"fields": ("name", "description", "country", "address", "price")},
+            {
+                "fields": (
+                    "name",
+                    "description",
+                    "country",
+                    "city",
+                    "address",
+                    "price",
+                    "room_type",
+                )
+            },
         ),
         ("Times", {"fields": ("check_in", "check_out", "instant_book")},),
         ("Spaces", {"fields": ("guests", "beds", "bedrooms", "baths")},),
@@ -58,6 +78,8 @@ class RoomAdmin(admin.ModelAdmin):
         "houserules",
     )
 
+    raw_id_fields = ("host",)
+
     # ^: startwidth     =:exactly
     # fk관계에 접근시 . 대신 __를 사용
     search_fields = ("^city", "^host__username")
@@ -70,6 +92,8 @@ class RoomAdmin(admin.ModelAdmin):
 
     def count_photos(self, obj):
         return obj.photos.count()
+
+    count_photos.short_description = "pohoto count"
 
 
 @admin.register(models.RoomType, models.Facility, models.Amenity, models.HouseRule)

@@ -105,4 +105,13 @@ class Room(core_models.TimeStampedModel):
         all_ratings = 0
         for review in all_reviews:
             all_ratings += review.rating_average()
-        return all_ratings / len(all_reviews)
+        if len(all_reviews):
+            return round(all_ratings / len(all_reviews))
+        return 0
+
+    # save메서드 오버라이딩
+    # 저장되는 순간에 수행하고 싶은 작업을 한 후에 super().save(...)로 저장하도록.
+    def save(self, *args, **kwargs):
+        self.city = str.capitalize(self.city)  # 첫번째 문자를 대문자로 변환하도록.
+        # ex) self.city = "Test" --> 어떤 내용으로 수정해서 저장하든 "Test"로 변경 후에 저장되기 때문에 Test가 저장됨.
+        super().save(*args, **kwargs)
