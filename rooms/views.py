@@ -1,5 +1,6 @@
 from math import ceil
 from . import models
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.http import HttpResponse
 
@@ -7,20 +8,9 @@ from django.http import HttpResponse
 
 
 def all_rooms(request):
-    page = request.GET.get("page", 1)
-    page = int(page or 1)
-    page_size = 10
-    limit = page * page_size
-    offset = limit - page_size
-    all_rooms = models.Room.objects.all()[offset:limit]
-    page_count = ceil(models.Room.objects.count() / page_size)
-    return render(
-        request,
-        "rooms/home.html",
-        context={
-            "rooms": all_rooms,
-            "page": page,
-            "page_count": page_count,
-            "page_range": range(1, page_count + 1),
-        },
-    )
+    page = request.GET.get("page")
+    room_list = models.Room.objects.all()  # all()을 호출해도 쿼리셋을 만들뿐, 즉시 모든 데이터베이스에 접근하진 않음
+    paginator = Paginator(room_list, 10)  # Room의 요소를 10개씩 불러오도록 세팅
+    rooms = paginator.get_page(page)
+    return render(request, "rooms/home.html", context={"rooms": rooms},)
+
