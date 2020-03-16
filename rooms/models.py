@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from core import models as core_models
 from users import models as user_models
 from django_countries.fields import CountryField
@@ -115,3 +116,7 @@ class Room(core_models.TimeStampedModel):
         self.city = str.capitalize(self.city)  # 첫번째 문자를 대문자로 변환하도록.
         # ex) self.city = "Test" --> 어떤 내용으로 수정해서 저장하든 "Test"로 변경 후에 저장되기 때문에 Test가 저장됨.
         super().save(*args, **kwargs)
+
+    # admin패널에서 프론트앤드 확인 가능
+    def get_absolute_url(self):
+        return reverse("rooms:detail", kwargs={"pk": self.pk})
