@@ -1,5 +1,7 @@
 from django.utils import timezone
-from django.shortcuts import render
+from django.urls import reverse
+from django.http import Http404
+from django.shortcuts import render, redirect
 from django.http import request
 from django.views.generic import ListView
 from django.core.paginator import Paginator, EmptyPage
@@ -37,4 +39,9 @@ class HomeView(ListView):
 
 def room_detail(request, pk):
 
-    return render(request, "rooms/detail.html")
+    try:
+        room = models.Room.objects.get(pk=pk)
+        return render(request, "rooms/detail.html", context={"room": room},)
+    except models.Room.DoesNotExist:  # 존재하지 않는 Room id일 경우 예외처리
+        # return redirect(reverse("core:home")) # 첫페이지로 리다이렉트
+        raise Http404()
