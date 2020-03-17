@@ -38,6 +38,7 @@ class HomeView(ListView):
 
 
 """
+# function based view
 def room_detail(request, pk):
 
     try:
@@ -48,7 +49,13 @@ def room_detail(request, pk):
         raise Http404()
 """
 
-
+# class based view
 class RoomDetail(DetailView):
     model = models.Room
     # pk_url_kwarg = ""  : 디폴트는 pk, 때문에 url의 인자를 pk로 설정해두면 알아서 pk값으로 매핑시킴.
+    # 예외발생 시 알아서 처리. (404에러)
+
+
+def search(request):
+    city = str.capitalize(request.GET.get("city"))
+    return render(request, "rooms/search.html", context={"city": city},)
