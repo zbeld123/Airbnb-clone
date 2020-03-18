@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.http import request
+from django_countries import countries
 from django.views.generic import ListView, DetailView
 from django.core.paginator import Paginator, EmptyPage
 from . import models
@@ -57,5 +58,47 @@ class RoomDetail(DetailView):
 
 
 def search(request):
-    city = str.capitalize(request.GET.get("city"))
-    return render(request, "rooms/search.html", context={"city": city},)
+
+    city = str.capitalize(request.GET.get("city", "Anywhere"))
+    country = request.GET.get("country", "KR")
+    room_type = int(request.GET.get("room_type", 0))
+    price = int(request.GET.get("price", 0))
+    guests = int(request.GET.get("guests", 0))
+    bedrooms = int(request.GET.get("bedrooms", 0))
+    beds = int(request.GET.get("beds", 0))
+    baths = int(request.GET.get("baths", 0))
+    instant = request.GET.get("instant")
+    superhost = request.GET.get("superhost")
+    # getlist
+    s_amenities = bool(request.GET.getlist("amenities", False))
+    s_facilities = bool(request.GET.getlist("facilities", False))
+    print(s_amenities)
+    form = {  # from Form : url로부터 받은 데이터
+        "city": city,
+        "s_country": country,
+        "s_room_type": room_type,
+        "s_amenities": s_amenities,
+        "s_facilities": s_facilities,
+        "price": price,
+        "guests": guests,
+        "bedrooms": bedrooms,
+        "beds": beds,
+        "baths": baths,
+        "instant": instant,
+        "superhost": superhost,
+    }
+
+    room_types = models.RoomType.objects.all()
+    amenities = models.Amenity.objects.all()
+    facilities = models.Facility.objects.all()
+
+    choices = {  # from Database
+        "countries": countries,
+        "room_types": room_types,
+        "amenities": amenities,
+        "facilities": facilities,
+    }
+
+    return render(request, "rooms/search.html", context={**form, **choices},)
+    ##   ** : unpacking
+
