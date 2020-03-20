@@ -59,7 +59,8 @@ class RoomDetail(DetailView):
 
 def search(request):
 
-    city = str.capitalize(request.GET.get("city", "Anywhere"))
+    city = request.GET.get("city", "Anywhere")
+    city = str.capitalize(city)
     country = request.GET.get("country", "KR")
     room_type = int(request.GET.get("room_type", 0))
     price = int(request.GET.get("price", 0))
@@ -67,11 +68,11 @@ def search(request):
     bedrooms = int(request.GET.get("bedrooms", 0))
     beds = int(request.GET.get("beds", 0))
     baths = int(request.GET.get("baths", 0))
-    instant = request.GET.get("instant")
-    superhost = request.GET.get("superhost")
+    instant = bool(request.GET.get("instant", False))
+    superhost = bool(request.GET.get("superhost", False))
     # getlist
-    s_amenities = bool(request.GET.getlist("amenities", False))
-    s_facilities = bool(request.GET.getlist("facilities", False))
+    s_amenities = request.GET.getlist("amenities")
+    s_facilities = request.GET.getlist("facilities")
     print(s_amenities)
     form = {  # from Form : url로부터 받은 데이터
         "city": city,
@@ -99,6 +100,50 @@ def search(request):
         "facilities": facilities,
     }
 
-    return render(request, "rooms/search.html", context={**form, **choices},)
+    filter_args = {}
+
+    if city != "Anywhere":  # city filter
+        filter_args["city__startswith"] = city
+
+    filter_args["country__exact"] = country  # country filter
+
+    if room_type != 0:
+        filter_args["room_type__pk__exact"] = room_type  # room_type filter
+
+    if price != 0:
+        filter_args["price__lte"] = price  # price filter (less then equals)
+
+    if guests != 0:
+        filter_args["guests__gte"] = guests  # guests filter (greater then equals)
+
+    if bedrooms != 0:
+        filter_args["beedrooms_gte"] = bedrooms  # guests filter (greater then equals)
+
+    if beds != 0:
+        filter_args["beds__gte"] = beds  # guests filter (greater then equals)
+
+    if baths != 0:
+        filter_args["baths__gte"] = baths  # guests filter (greater then equals)
+
+    if instant is True:
+        filter_args["instant_book"] = instant
+
+    if superhost is True:
+        filter_args["host__superhost"] = superhost
+
+    # amenities , facilities m-to-m rel filtering
+    if len(s_amenities) > 0:
+        for s_amenity in s_amenities:
+            filter_args["amenities__pk"] = int(s_amenity)
+
+    if len(s_facilities) > 0:
+        for s_facility in s_facilities:
+            filter_args["facilities__pk"] = int(s_facility)
+
+    rooms = models.Room.objects.filter(**filter_args)
+
+    return render(
+        request, "rooms/search.html", context={**form, **choices, "rooms": rooms},
+    )
     ##   ** : unpacking
 
